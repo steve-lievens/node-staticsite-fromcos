@@ -28,7 +28,7 @@ node app.js
 
 If you wish to deploy this on IBM Cloud Code Engine, here are two ways to do this :
 
-- Create a container image locally, push it to your registry and deploy on Code Engine using this registry image.
-- Deploy directly from the git repo, letting Code Engine build the image, store it and deploy it.
+- [Create a container image locally, push it to your registry and deploy on Code Engine using this registry image.](CE-DEPLOY-LOCAL-IMG.MD)
+- [Deploy directly from the git repo, letting Code Engine build the image, store it and deploy it.](CE-DEPLOY-FROM-GIT.MD)
 
 In both options, the environment variables will be pushed into a ConfigMap which will then be attached to the container.

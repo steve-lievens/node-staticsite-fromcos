@@ -1,8 +1,7 @@
-# Deploy to Code Engine with a locally built image
+# Deploy to Code Engine from the Git repo
 
-When choosing this route, I presume you have the knowledge to build container images, so no instructions are provided for this step.
-If you've successfully built a local image (with x86 architecture, so watch out Mac Silicon users), you can push your image to the IBM Cloud image registry. (Or another one of your choosing, but info is provided for IBM Cloud)
-
+Using this procedure, IBM Code Engine will build the image for you and store it in an image registry. (So you will also need write access to an image registry)
+Instructions are provided when using the IBM Cloud registry, but feel free to use your own when you have one.
 After that it's easy to deploy it to Code Engine.
 
 Make sure you have the ibmcloud cli with the container registry plugin installed :
