@@ -1,14 +1,33 @@
 # Deploy to Code Engine with a locally built image
 
 When choosing this route, I presume you have the knowledge to build container images, so no instructions are provided for this step.
+
 If you've successfully built a local image (with x86 architecture, so watch out Mac Silicon users), you can push your image to the IBM Cloud image registry. (Or another one of your choosing, but info is provided for IBM Cloud)
+
+(Tip to build x86 containers on Apple Silicon : docker build --platform linux/amd64 --load -t node-static-site:1.0 .)
 
 After that it's easy to deploy it to Code Engine.
 
-Make sure you have the ibmcloud cli with the container registry plugin installed :
+Make sure you have the ibmcloud cli
+(instructions here : https://cloud.ibm.com/docs/cli?topic=cli-getting-started)
+with the container registry plugin installed.
+
+To check if you have it :
+
+```
+ibmcloud plugin list
+```
+
+To install :
 
 ```
 ibmcloud plugin install container-registry -r 'IBM Cloud'
+```
+
+To update :
+
+```
+ibmcloud plugin update cr
 ```
 
 Login to the ibmcloud cli :
@@ -36,7 +55,7 @@ Ensure that you're targeting the correct IBM Cloud Container Registry region.(li
 ibmcloud cr region-set REGION
 ```
 
-Take a note of the registry hostname (e.g. us.icr.io)
+Take a note of the registry hostname (e.g. de.icr.io)
 Now you can login to the registry : (it will use your IBM Cloud authentication, so no need to provide extra credentials)
 
 ```
@@ -83,10 +102,34 @@ With the api key, we configure the access to the above IBM Cloud registry, so th
 ibmcloud ce secret create --format registry --name <myregistry> --server <registry-hostname> --username iamapikey --password <APIKEY>
 ```
 
-Now we can deploy our app. In the command below, the app name is free to choose, the image name is the same as the tag you gave your local image and the registry-secret is the one created above.
+Next we create a configmap that holds our application configuration from the environment file we created (my.env)
 
 ```
-ibmcloud ce app create --name <myapp> --image <your-image-name> --registry-secret <myregistry>
+ibmcloud ce configmap create --name static-site-cfg --from-env-file my.env
+```
+
+Now we can deploy our app. In the command below, the app name is free to choose, the image name is the same as the tag you gave your local image and the registry-secret is the one created above.
+We're also referencing the configmap created above to pass the configuration into the container as environment variables.
+
+```
+ibmcloud ce app create --name <myapp> --image <your-image-name> --registry-secret <myregistry> --env-from-configmap static-site-cfg
 ```
 
 This will deploy the app with 1vCPU and 4GB ram (which are the defaults)
+
+Other parameters you might want to add are :
+
+- --min-scale 1 : to always keep at least 1 container running (so no more serverless behaviour)
+- --cpu 0.125 : set the desired cpu
+- --memory 0.5G : set the desired memory
+
+For cpu and memory, adhere to the supported cpu/memory combinations.
+https://cloud.ibm.com/docs/codeengine?topic=codeengine-mem-cpu-combo
+
+If you want to change any values after application creation, use
+
+```
+ibmcloud ce app update
+```
+
+instead.
