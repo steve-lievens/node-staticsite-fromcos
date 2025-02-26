@@ -102,7 +102,7 @@ With the api key, we configure the access to the above IBM Cloud registry, so th
 ibmcloud ce secret create --format registry --name <myregistry> --server <registry-hostname> --username iamapikey --password <APIKEY>
 ```
 
-Next we create a configmap that holds our application configuration from the environment file we created (my.env)
+Next we create a configmap that holds our application configuration from the environment file we created (my.env). If you missed this step, it's in the main [README](README.MD).
 
 ```
 ibmcloud ce configmap create --name static-site-cfg --from-env-file my.env
