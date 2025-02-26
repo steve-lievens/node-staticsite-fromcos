@@ -1,5 +1,5 @@
 # Use the official Node.js 22 image as the base image
-FROM node:22
+FROM node:22-alpine
 
 # Set the working directory
 WORKDIR /tmp/
@@ -17,4 +17,4 @@ COPY ./app.js ./app.js
 EXPOSE 3000
 
 # Define the command to run the application
-CMD ["node", "app.js"]
+ENTRYPOINT ["node", "app.js"]
