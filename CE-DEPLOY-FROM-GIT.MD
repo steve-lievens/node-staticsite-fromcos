@@ -62,6 +62,8 @@ With the configuration created, we can now run the actual build.
 ibmcloud ce buildrun submit --build <build-config-name> --name <build-config-run-name>
 ```
 
+The above command might fail when the registry access is limited, please see the [troubleshooting section](CE-DEPLOY-TROUBLESHOOT.MD).
+
 Next we create a configmap that holds our application configuration from the environment file we created (my.env). If you missed this step, it's in the main [README](README.MD). You need to have this file locally in the same folder as from where you're running the below command.
 
 ```
