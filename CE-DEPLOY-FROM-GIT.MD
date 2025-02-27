@@ -62,12 +62,34 @@ With the configuration created, we can now run the actual build.
 ibmcloud ce buildrun submit --build <build-config-name> --name <build-config-run-name>
 ```
 
-Although there a cli command to build it in one go, having a separate config and then running it allows you to re-run the build every time there's a git change.
-
-Now we can deploy our app. In the command below, the app name is free to choose, the image name is the same as the tag you gave your local image and the registry-secret is the one created above.
+Next we create a configmap that holds our application configuration from the environment file we created (my.env). If you missed this step, it's in the main [README](README.MD). You need to have this file locally in the same folder as from where you're running the below command.
 
 ```
-ibmcloud ce app create --name <myapp> --image <your-image-name> --registry-secret <myregistry>
+ibmcloud ce configmap create --name static-site-cfg --from-env-file my.env
+```
+
+Now we can deploy our app. In the command below, the app name is free to choose, the image name is the same as the tag you gave your local image and the registry-secret is the one created above.
+We're also referencing the configmap created above to pass the configuration into the container as environment variables.
+
+```
+ibmcloud ce app create --name <myapp> --image <your-image-name> --registry-secret <myregistry> --env-from-configmap static-site-cfg
 ```
 
 This will deploy the app with 1vCPU and 4GB ram (which are the defaults)
+
+Other parameters you might want to add are :
+
+- --min-scale 1 : to always keep at least 1 container running (so no more serverless behaviour)
+- --cpu 0.125 : set the desired cpu
+- --memory 0.5G : set the desired memory
+
+For cpu and memory, adhere to the supported cpu/memory combinations.
+https://cloud.ibm.com/docs/codeengine?topic=codeengine-mem-cpu-combo
+
+If you want to change any values after application creation, use
+
+```
+ibmcloud ce app update
+```
+
+instead.
