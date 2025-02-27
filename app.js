@@ -20,6 +20,7 @@ require("dotenv-defaults").config({
 });
 
 // IBM COS ENV
+let COS_READY = true;
 const COS_ENDPOINT = process.env.COS_ENDPOINT;
 const COS_APIKEY = process.env.COS_APIKEY;
 const COS_HMAC_ACCESS = process.env.COS_HMAC_ACCESS;
@@ -35,6 +36,19 @@ console.log("INFO: Here we go ! Starting up the app !!!");
 // --------------------------------------------------------------------------
 // Initialization IBM COS
 // --------------------------------------------------------------------------
+if (
+  COS_APIKEY === "" ||
+  COS_ENDPOINT === "" ||
+  COS_RES_INST_ID === "" ||
+  COS_HMAC_ACCESS === "" ||
+  COS_HMAC_SECRET === "" ||
+  COS_BUCKET === ""
+) {
+  console.error(
+    "ERROR: Missing environment variables. Please check or create the my.env file."
+  );
+  COS_READY = false;
+}
 const config = {
   endpoint: COS_ENDPOINT,
   apiKeyId: COS_APIKEY,
@@ -73,6 +87,12 @@ app.listen(process.env.PORT || 8080, function () {
 // Static Content : also map the root dir to the static folder and paths used by React frontend
 // --------------------------------------------------------------------------
 app.get("/*", (req, res) => {
+  // If COS not ready, get out
+  if (!COS_READY) {
+    res.end("ERROR: COS not ready. Setup the environment variables.");
+    return;
+  }
+
   // Get the static file path
   const staticFilePath = req.url.replace("/", "");
   console.log("INFO: Static file requested : ", staticFilePath);
